@@ -13,6 +13,7 @@ def leitora():
     pontos = float(input("Digite a quantidade de pontos? "))
     i = 1
     while i <= pontos:
+        print('A seguir digite os pontos das coordenadas em ordem crescente de X.')
         x.append(input(f'Digite o ponto X{i}: '))
         y.append(input(f'Digite o ponto Y{i}: '))
         i = i + 1
