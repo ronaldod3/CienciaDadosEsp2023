@@ -36,8 +36,25 @@ for item in acoes:
     print(f'Alfa de Jensen: {item}')
     print(model.summary(), '\n')
 
-#risco especifico
+'''risco especifico
 
-#teste de modelo
+    # Specific Risk and t-value
+    specific_risk = np.sqrt(model.mse_resid)  # Residual Standard Error
+    dof = len(acao) - 2  # Degrees of Freedom
+    t_value = model.tvalues['Mercado']  # t-value for the market coefficient
+
+    print(f'Specific Risk for {item}: {specific_risk}')
+    print(f't-value for {item}: {t_value}\n')
+
 
 #correlacao serial
+
+    # Plotting Correlogram
+    fig, ax = plt.subplots(figsize=(8, 4))
+    tsaplots.plot_acf(acao, lags=20, ax=ax, alpha=0.05)
+    ax.set_title(f'Autocorrelation for {item}')
+    plt.show()
+
+'''
+
+
