@@ -1,30 +1,43 @@
-#https://pt.linkedin.com/pulse/calculando-o-capm-python-rodrigo-jov%C3%AA
-
 import yfinance as yf
 from datetime import datetime
 import numpy as np
 import pandas as pd
 
 end_data = datetime.now().strftime('%Y-%m-%d')
-
-acao1 = (yf.download("VALE", start="2019-01-01", end=end_data, progress=False, interval='1mo')['Adj Close'].pct_change()).dropna()
 mercado = (yf.download("^BVSP", start="2019-01-01", end=end_data, progress=False, interval='1mo')['Adj Close'].pct_change()).dropna()
-
-cdi = pd.read_json('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4390/dados?formato=json')['valor']
-cdi1 = cdi[-len(mercado):]
-
-acao1 = np.array(acao1)
 mercado = np.array(mercado)
 
-#estimacao do modelo
+#CDI DIARIO
+cdi = pd.read_json('https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json')
 
-#alfa de Jenses
+#CDI MES
+cdi = pd.read_json('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4390/dados?formato=json')['valor']
+cdi1 = np.array(cdi[-len(mercado):])
+
+import statsmodels.formula.api as smf
+acoes = ['VALE', 'PETR4.SA']
+
+for item in acoes:
+    #Modelo Regressao/Teste Modelo
+    acao = (yf.download(item, start="2019-01-01", end=end_data, progress=False, interval='1mo')['Adj Close'].pct_change()).dropna()
+    y = acao
+    x = mercado
+    df = pd.DataFrame({'Ativo': y, 'Mercado': x})
+    model = smf.ols('Ativo ~ Mercado', data=df).fit()
+    print(f'Ativo: {item}')
+    print(model.summary(), '\n')
+
+    #Alfa Jensen é o intercepto, teste t do intercepto
+    y = acao - cdi1
+    x = mercado - cdi1
+    df = pd.DataFrame({'Rativo': y, 'Rmercado': x})
+    model = smf.ols('Rativo ~ Rmercado', data=df).fit()
+    print(f'Ativo: {item}')
+    print(f'Alfa de Jensen: {item}')
+    print(model.summary(), '\n')
 
 #risco especifico
 
 #teste de modelo
 
 #correlacao serial
-
-
-#retorno_esperado = cdi1 + beta * (acao1 - cdi1)
